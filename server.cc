@@ -32,6 +32,8 @@ void Server::set_response() {
     string sbody(body, body+this->fsize());
        
     this->response = this->response + sbody + "\r\n\0";
+
+    free(body);
 }
 
 Server::Server(string filename) {
@@ -62,7 +64,7 @@ void Server::Init(uint16_t port) {
     int namelen;
     int ns;
 
-    char buff[2048];
+    char buff[4096];
 
     int s;
 

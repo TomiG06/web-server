@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
     
     /* Variables to store flag arguments */
     int port = 8080;
-    string fname;
+    string fname = "";
 
     for(uint8_t x = 0; x < argc; x++) {
         
@@ -36,6 +36,16 @@ int main(int argc, char** argv) {
                     uknown_arg(argv[x]);
             }
         }
+    }
+
+    if(port < 1024) {
+        cout << "Port must be < 1024\nPort given: "<< port << endl;
+        return 1;
+    }
+
+    if(fname.empty()) {
+        cout << "No input file\n";
+        return 1;
     }
 
     Server s(fname);
