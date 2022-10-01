@@ -1,5 +1,4 @@
-#ifndef SERVER_H
-#define SERVER_H
+#pragma once
 
 #include <stdint.h>
 #include <iostream>
@@ -29,6 +28,4 @@ class Server {
         Server(string fname);
         void Init(uint16_t port);
 };
-
-#endif
 
