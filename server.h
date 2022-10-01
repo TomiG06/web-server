@@ -6,6 +6,8 @@
 
 using namespace std;
 
+/*  Server Class Prototype */
+
 /* 
     Server class
     

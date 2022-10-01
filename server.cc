@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 
+/* Display error message and exit*/
 void err(string msg) {
     cout << msg << endl;
     exit(1);
@@ -86,22 +87,27 @@ void Server::Init(uint16_t port) {
         if(!fork()) {
 
             if(recv(ns, buff, sizeof(buff), 0) == -1) err("recv");
-
             puts(buff);
 
             Server::set_response();
-
             cout << this->response;
 
             if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) err("send");
-
+            
+            /* Close client after sending is finished */
             close(ns);
+
+            /* Finish child process */
             exit(0);
         }
-
+        
+        /* Child process is dealing with this so Parent doesn't need it*/
         close(ns);
-
     }
+
+    /* 
+        This command will never be executed
+    */
     close(s);
 }
 
