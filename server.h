@@ -1,8 +1,6 @@
 #pragma once
 
-#include <stdint.h>
 #include <iostream>
-#include <sys/socket.h>
 
 using namespace std;
 
