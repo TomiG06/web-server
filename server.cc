@@ -39,21 +39,27 @@ void Server::set_response() {
 
 Server::Server(string filename) {
     this->fname = filename;
+
+    ifstream f(this->fname);
+
+    if(!f.good()) {
+        string serr = "File '" + this->fname + "' does not exist";
+        err(serr);
+    }
+
+    f.close();
 }
 
 
 char* Server::read_ifile() {
     ifstream ifile(this->fname);
 
-    if(!ifile.good()) {
-        cout << "File '" << this->fname << "' does not exist\n";
-        exit(1);
-    }
-
     ssize_t c = 0;
     char* ret = (char*) malloc(this->fsize());
 
     while(!ifile.eof()) ifile.get(ret[c++]);
+
+    ifile.close();
 
     return ret;
 }
