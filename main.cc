@@ -1,3 +1,24 @@
+/*
+    Web-Server
+
+    usage: ws [-p: port] [-f: path/to/file]
+        
+        -p: The port where the server will run
+            default port: 8080
+
+        -f: The file which the server will serve 
+            (hypothesizes that the file will be served as 'text/html')
+
+    Notes:
+        - Response string is set every time the server accepts a TCP client according to the contents of the file at the time.
+          This means that if the file is changed while the server is running, the server will serve the changes.
+
+          (Might add functionality to enable/disable this feature is the future)
+          
+        - There are some problems with binding the socket at ports that had previously been used
+*/
+
+
 #include <iostream>
 #include <string.h>
 #include <stdlib.h>
@@ -48,9 +69,10 @@ int main(int argc, char** argv) {
         return 1;
     }
 
+    /* Instantiate Server */
     Server s(fname);
 
-    /* Start server */
+    /* Start Server */
     s.Init(port);
 
     return 0;
