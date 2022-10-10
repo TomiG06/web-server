@@ -22,6 +22,8 @@ ssize_t Server::fsize() {
 }
 
 void Server::set_response() {
+    if(this->res_is_set) return;
+
     this->response = "";
     this->response.append(basic_head);
     this->response.append("Content-Type: text/html\r\n");
@@ -34,11 +36,14 @@ void Server::set_response() {
        
     this->response = this->response + sbody + "\r\n\0";
 
+    if(!this->read_multi) this->res_is_set = true;
+
     free(body);
 }
 
-Server::Server(string filename) {
+Server::Server(string filename, bool read_multi) {
     this->fname = filename;
+    this->read_multi = read_multi;
 
     ifstream f(this->fname);
 
@@ -48,6 +53,8 @@ Server::Server(string filename) {
     }
 
     f.close();
+
+    if(this->read_multi) Server::set_response();
 }
 
 
@@ -90,25 +97,17 @@ void Server::Init(uint16_t port) {
 
         if((ns = accept(s, (struct sockaddr*) &client, (socklen_t*)&namelen)) == -1) err("accept");
 
-        if(!fork()) {
+        if(recv(ns, buff, sizeof(buff), 0) == -1) err("recv");
+        puts(buff);
 
-            if(recv(ns, buff, sizeof(buff), 0) == -1) err("recv");
-            puts(buff);
+        Server::set_response();
+        cout << this->response;
 
-            Server::set_response();
-            cout << this->response;
-
-            if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) err("send");
+        if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) err("send");
             
             /* Close client after sending is finished */
-            close(ns);
-
-            /* Finish child process */
-            exit(0);
-        }
-        
-        /* Child process is dealing with this so Parent doesn't need it*/
         close(ns);
+
     }
 
     /* 

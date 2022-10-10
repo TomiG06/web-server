@@ -8,13 +8,9 @@
 
         -f: The file which the server will serve 
             (hypothesizes that the file will be served as 'text/html')
+        -m: Set response every time a TCP client is accepted
 
     Notes:
-        - Response string is set every time the server accepts a TCP client according to the contents of the file at the time.
-          This means that if the file is changed while the server is running, the server will serve the changes.
-
-          (Might add functionality to enable/disable this feature in the future)
-          
         - There are some problems with binding the socket at ports that had previously been used
 
         - Forking is used to handle requests, although it isn't really practical for various reasons, so I will replace it with threads soon
@@ -39,6 +35,7 @@ int main(int argc, char** argv) {
     /* Variables to store flag arguments */
     int port = 8080;
     string fname = "";
+    bool read_multi = false;
 
     for(uint8_t x = 0; x < argc; x++) {
         
@@ -55,6 +52,9 @@ int main(int argc, char** argv) {
                 case 'f':
                     fname = argv[x+1];
                     break;
+                case 'm':
+                    read_multi = true;
+                    break;
                 default:
                     uknown_arg(argv[x]);
             }
@@ -62,7 +62,7 @@ int main(int argc, char** argv) {
     }
 
     if(port < 1024) {
-        cout << "Port must be < 1024\nPort given: "<< port << endl;
+        cout << "Port must be > 1024\nPort given: "<< port << endl;
         return 1;
     }
 
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     }
 
     /* Instantiate Server */
-    Server s(fname);
+    Server s(fname, read_multi);
 
     /* Start Server */
     s.Init(port);
