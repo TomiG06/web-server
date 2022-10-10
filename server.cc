@@ -97,6 +97,18 @@ void Server::Init(uint16_t port) {
 
         if((ns = accept(s, (struct sockaddr*) &client, (socklen_t*)&namelen)) == -1) err("accept");
 
+        /*
+            At this point of the program, use of threads
+            would theoriticaly be a good idea but due to
+            the fact that this server is not going to have
+            to work with a lot of requests simultaneously,
+            technicaly speaking it's probably not worth
+            the time and resources
+
+            Although, I'm leaving the possibility for adding
+            this open, just for learning more about MT.
+        */
+
         if(recv(ns, buff, sizeof(buff), 0) == -1) err("recv");
         puts(buff);
 
@@ -105,7 +117,7 @@ void Server::Init(uint16_t port) {
 
         if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) err("send");
             
-            /* Close client after sending is finished */
+        /* Close client after sending is finished */
         close(ns);
 
     }
