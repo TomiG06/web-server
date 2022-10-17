@@ -1,13 +1,15 @@
-#include "server.h"
-#include <string>
+#include <cstdio>
+#include <cstdlib>
 #include <filesystem>
 #include <fstream>
-#include <cstdlib>
-#include <cstdio>
-#include <unistd.h>
+#include <netinet/in.h>
+#include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <netinet/in.h>
+#include <thread>
+#include <unistd.h>
+
+#include "server.h"
 
 /* Display error message and exit*/
 void err(string msg) {
@@ -71,14 +73,39 @@ char* Server::read_ifile() {
     return ret;
 }
 
+void Server::handle_request(int ns) {
+    this->m.lock();
+
+    char buff[4096];
+
+    if(recv(ns, buff, sizeof(buff), 0) == -1) {
+        puts("recv");
+        return;
+    }
+    puts(buff);
+
+    Server::set_response();
+    cout << this->response;
+ 
+    if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) {
+    puts("send");
+    return;
+    }
+
+    this->m.unlock();
+ 
+    /* Close connection */
+    close(ns);
+
+    return;
+}
+
 void Server::Init(uint16_t port) {
     struct sockaddr_in server;
     struct sockaddr_in client;
 
     int namelen;
     int ns;
-
-    char buff[4096];
 
     int s;
 
@@ -97,28 +124,7 @@ void Server::Init(uint16_t port) {
 
         if((ns = accept(s, (struct sockaddr*) &client, (socklen_t*)&namelen)) == -1) err("accept");
 
-        /*
-            At this point of the program, use of threads
-            would theoriticaly be a good idea but due to
-            the fact that this server is not going to have
-            to work with a lot of requests simultaneously,
-            technicaly speaking it's probably not worth
-            the time and resources
-
-            Although, I'm leaving the possibility for adding
-            this open, just for learning more about MT.
-        */
-
-        if(recv(ns, buff, sizeof(buff), 0) == -1) err("recv");
-        puts(buff);
-
-        Server::set_response();
-        cout << this->response;
-
-        if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) err("send");
-            
-        /* Close client after sending is finished */
-        close(ns);
+        thread(&Server::handle_request, this, ns).detach();
 
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <mutex>
 
 using namespace std;
 
@@ -22,9 +23,12 @@ class Server {
         bool read_multi;
         bool res_is_set;
 
+        mutex m;
+
         ssize_t fsize();        //File Size
         void set_response();    //Sets response string
         char* read_ifile();     //Reads the contents of file
+        void handle_request(int ns);
 
     public:
         Server(string fname, bool read_multi);
