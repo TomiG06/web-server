@@ -88,8 +88,8 @@ void Server::handle_request(int ns) {
     cout << this->response;
  
     if(send(ns, this->response.c_str(), this->response.size(), 0) < 0) {
-    puts("send");
-    return;
+        puts("send");
+        return;
     }
 
     this->m.unlock();
