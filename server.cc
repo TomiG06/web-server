@@ -49,10 +49,7 @@ Server::Server(string filename, bool read_multi) {
 
     ifstream f(this->fname);
 
-    if(!f.good()) {
-        string serr = "File '" + this->fname + "' does not exist";
-        err(serr);
-    }
+    if(!f.good()) err("File '"+ this->fname + "' does not exist");
 
     f.close();
 

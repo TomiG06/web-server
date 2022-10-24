@@ -12,8 +12,6 @@
 
     Notes:
         - There are some problems with binding the socket at ports that had previously been used
-
-        - Forking is used to handle requests, although it isn't really practical for various reasons, so I will replace it with threads soon
 */
 
 
