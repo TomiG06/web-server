@@ -1,4 +1,4 @@
-FLAGS = -o ws -pthread
+FLAGS = -o ws -pthread -Wall -Wextra -pedantic
 SOURCE_F = main.cc server.cc
 
 ws: main.cc server.cc server.h
