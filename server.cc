@@ -1,5 +1,6 @@
 #include <cstdio>
 #include <cstdlib>
+#include <cstring>
 #include <filesystem>
 #include <fstream>
 #include <netinet/in.h>
@@ -79,7 +80,6 @@ void Server::handle_request(int ns) {
         puts("recv");
         return;
     }
-    puts(buff);
 
     Server::set_response();
  
@@ -111,7 +111,7 @@ void Server::Init(uint16_t port) {
     server.sin_port   = htons(port);
     server.sin_addr.s_addr = INADDR_ANY;
 
-    if(bind(s, (struct sockaddr*)&server, sizeof(server)) < 0) err("bind");
+    if(bind(s, (struct sockaddr*)&server, sizeof(server)) < 0) err(strerror(errno));
     if(listen(s, 3)) err("listen");
 
     namelen = sizeof(client);

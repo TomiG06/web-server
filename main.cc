@@ -9,9 +9,6 @@
         -f: The file which the server will serve 
             (hypothesizes that the file will be served as 'text/html')
         -m: Set response every time a TCP client is accepted
-
-    Notes:
-        - There are some problems with binding the socket at ports that had previously been used
 */
 
 
@@ -59,7 +56,7 @@ int main(int argc, char** argv) {
         }
     }
 
-    if(port < 1024) {
+    if(port <= 1024) {
         cout << "Port must be > 1024\nPort given: "<< port << endl;
         return 1;
     }
